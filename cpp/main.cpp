@@ -31,17 +31,18 @@ void test_insertion_sort()
     std::string strArray[] = {"orange", "pear", "banana"};
     std::array<char, 5> charstdArray = {'e', 'd', 'a', 'c', 'b'};
 
-    insertion_sort(charArray);   // Uses the const char* specialization
+    insertion_sort(charArray, strcmp_wrapper);   // Uses the const char* specialization
     const char* cmpchar[] = {"apple", "banana", "cherry"};
-    compare_array(charArray, cmpchar);
+    compare_array(charArray, cmpchar, strcmp_wrapper);
 
-    insertion_sort(strArray);    // Uses the std::string specialization
+    insertion_sort(strArray, string_comp_wrapper);    // Uses the std::string specialization
     std::string cmpstr[] = {"banana", "orange", "pear"};
-    compare_array(strArray, cmpstr);
+    compare_array(strArray, cmpstr, string_comp_wrapper);
 
     insertion_sort(charstdArray);  // Uses the std::array specialization
     std::array<char, 5> cmpstdArray = {'a', 'b', 'c', 'd', 'e'};
     compare_array(charstdArray, cmpstdArray);
+
 }
 void test_print_array()
 {
