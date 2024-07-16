@@ -1,0 +1,11 @@
+Set up Google Test:
+https://www.eriksmistad.no/getting-started-with-google-test-on-ubuntu/
+
+
+Test the C Answer Book and K&R lessons as an assumed baseline
+
+cmake -DCMAKE_BUILD_TYPE=Debug
+./clean.sh
+
+References:
+https://stackoverflow.com/questions/48589258/does-gtest-support-file-comparison

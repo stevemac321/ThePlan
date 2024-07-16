@@ -1,0 +1,26 @@
+/*==============================================================================
+ Name        : KR.1.10.c
+ Author      : Stephen MacKenzie
+ Copyright   : Licensed under GPL version 2 (GPLv2)
+Abstract     : Replace \t \b and \ with visible marker
+==============================================================================*/
+#define _GNU_SOURCE
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int main()
+{
+	FILE *pf = fopen("1.9.c", "r");
+	assert(pf);
+
+	int c = 0;
+	while ((c = getc(pf)) != EOF) {
+
+	}
+
+	fclose(pf);
+}
