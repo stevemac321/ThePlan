@@ -2,6 +2,7 @@
 #include "binarytree.h"
 #include "insertion_sort.h"
 #include "merge_sort.h"
+#include "heap_sort.h"
 
 int main(int argc, char *argv[])
 {
