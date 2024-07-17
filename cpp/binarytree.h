@@ -23,7 +23,7 @@ struct BNode {
     }
 };
 
-template <typename DataType>
+template <Numeric DataType>
 class BinTree {
     BNode<DataType>* root = nullptr;
 
@@ -46,6 +46,13 @@ class BinTree {
             inner_visit(p->left);
             std::cout << p->data << " ";
             inner_visit(p->right);
+        }
+    }
+    void inner_get_test_vector(BNode<DataType>* p, std::vector<DataType>& v) {
+        if (p) {
+            inner_get_test_vector(p->left, v);
+            v.push_back(p->data);
+            inner_get_test_vector(p->right, v);
         }
     }
 
@@ -99,6 +106,13 @@ public:
          std::cout << "---------------Tree Visit-------------------\n ";
         inner_visit(root);
          std::cout << "\n---------------End Tree Visit-------------\n ";
+    }
+    
+    std::vector<DataType> get_test_vector() 
+    {
+        std::vector<int> v;
+        inner_get_test_vector(root, v);
+        return v;
     }
 
     void insert(const DataType& data) {

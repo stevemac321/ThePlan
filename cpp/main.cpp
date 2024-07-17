@@ -1,49 +1,74 @@
 #include "common.h"
 #include "binarytree.h"
-#include "sort.h"
+#include "insertion_sort.h"
 
 void test_binary_tree()
 {
-       int a[] = {9, 3, 5, 1};
+    TEST_BEGIN("test_binary_tree 1")
+    int a[] = {9, 3, 5, 1};
     BinTree<int> tree;
-
+  
     // Inserting elements into the tree
     for (const auto& i : a) {
         tree.insert(i);
     }
-
-    std::cout << "\nBefore Remove:\n";
-    tree.visit();
-
+    std::vector<int> v  = tree.get_test_vector();
+    int exp[] = {1, 3, 5, 9};
+    ASSERT_ITER_EQ(std::begin(exp), std::end(exp), v.begin(), v.end()); 
+    TEST_END("test_binary_tree 1")    
+    
+    TEST_BEGIN("test_binary_tree 2")
+    int exp2[] = {1, 3, 9};
     int val = 5;
     tree.remove(val);
-
-    std::cout << "\nAfter Remove:\n";
-    tree.visit();
+    std::vector<int> v2  = tree.get_test_vector();
+    ASSERT_ITER_EQ(std::begin(exp2), std::end(exp2), v2.begin(), v2.end()); 
+   
+    TEST_END("test_binary_tree 2")
 }
 void test_insertion_sort()
 {
+    TEST_BEGIN("test_insertion_sort 1")
     int a[] = {44,2,6,8,0,1};
     int b[] = {0,1,2,6,8,44};
     insertion_sort(a);
-    compare_array(a,b);
+    ASSERT_ITER_EQ(std::begin(a), std::end(a), std::begin(b), std::end(b)); 
+    TEST_END("test_insertion_sort 1")
+
+    TEST_BEGIN("test_insertion_sort 2")
+    int a2[] = {44,2,6,8,0,1};
+    int g[] = {44,8,6,2,1,0};
+    insertion_sort(a2, std::less());
+    ASSERT_ITER_EQ(std::begin(a2), std::end(a2), std::begin(g), std::end(g)); 
+    TEST_END("test_insertion_sort 2")
+     
+    TEST_BEGIN("test_insertion_sort 3")
     const char* charArray[] = {"banana", "apple", "cherry"};
-    std::string strArray[] = {"orange", "pear", "banana"};
+    const char* cmpArray[] = {"apple", "banana","cherry"};
+    insertion_sort(charArray, strcmp_wrapper);
+    for(int i=0; i < 3; i++) {
+        ASSERT_STREQ(charArray[i], cmpArray[i]);
+    }
+    TEST_END("test_insertion_sort 3")
+
+    TEST_BEGIN("test_insertion_sort 4")
+    std::string stringArray[] = {"banana", "apple", "cherry"};
+    std::string cmpStringArray[] = {"apple", "banana","cherry"};
+    insertion_sort(stringArray, string_comp_wrapper);
+    for(int i=0; i < 3; i++) {
+        ASSERT_STR_EQ(stringArray[i], cmpStringArray[i]);
+    }
+    TEST_END("test_insertion_sort 4")
+
+    TEST_BEGIN("test_insertion_sort 5")
     std::array<char, 5> charstdArray = {'e', 'd', 'a', 'c', 'b'};
-
-    insertion_sort(charArray, strcmp_wrapper);   // Uses the const char* specialization
-    const char* cmpchar[] = {"apple", "banana", "cherry"};
-    compare_array(charArray, cmpchar, strcmp_wrapper);
-
-    insertion_sort(strArray, string_comp_wrapper);    // Uses the std::string specialization
-    std::string cmpstr[] = {"banana", "orange", "pear"};
-    compare_array(strArray, cmpstr, string_comp_wrapper);
+    std::array<char, 5> cmpstdArray = {'a', 'b', 'c', 'd', 'e'};
 
     insertion_sort(charstdArray);  // Uses the std::array specialization
-    std::array<char, 5> cmpstdArray = {'a', 'b', 'c', 'd', 'e'};
-    compare_array(charstdArray, cmpstdArray);
-
-}
+    ASSERT_ITER_EQ(std::begin(charstdArray), std::end(charstdArray), std::begin(cmpstdArray), std::end(cmpstdArray)); 
+    TEST_END("test_insertion_sort 5")
+    
+} 
 void test_print_array()
 {
     int a[] = {44,2,6,8,0,1};
@@ -58,10 +83,12 @@ void test_print_array()
     print_array(charstdArray);
 }
 
-int main() 
+int main(int argc, char *argv[])
 {
     enable_virtual_terminal_processing();
-    test_binary_tree();
-    test_insertion_sort();  
-    test_print_array(); 
+
+	test_binary_tree();
+    test_insertion_sort();
+
+    print_summary();
 }

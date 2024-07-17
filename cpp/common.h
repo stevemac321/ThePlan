@@ -6,6 +6,8 @@
 #include <string>
 #include <array>
 #include <cstring>
+#include <vector>
+#include <chrono>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -40,8 +42,8 @@ template <typename T, const size_t N> constexpr size_t __countof(T (&)[N])
     return N;
 }
 // lambdas for comparisons
-auto strcmp_wrapper = [](const char* a, const char* b) { return std::strcmp(a, b) < 0; };
-auto string_comp_wrapper = [](const std::string& a, const std::string& b) { return a.compare(b) < 0; };
+auto strcmp_wrapper = [](const char* a, const char* b) { return std::strcmp(a, b) > 0; };
+auto string_comp_wrapper = [](const std::string& a, const std::string& b) { return a.compare(b) > 0; };
 
 template <typename DataType>
 concept Numeric = std::is_arithmetic_v<DataType>;
@@ -64,34 +66,77 @@ void print_array(std::array<char, N>& a)
     }
     std::cout << "\n--------End Print Array-------------\n\n";
 }
-///////////////////////////////////////////////////////////////////////
-template <typename T, const size_t N, typename Compare = std::less<T>> 
-bool compare_array(T (&a)[N], T (&b)[N], Compare comp=Compare()) 
-{
-    for(int i=0; i < N; i++) {
-        if(comp(a[i], b[i])!= 0) {
-            std::cout << RED << "Array a not eq to b at sub " << i << RESET << std::endl;
-            print_array(a);
-            print_array(b);
-            return false;
+//////////////////////////////////////////////////////////////////////
+    // Global variables
+int test_count = 0;
+int test_passed = 0;
+int test_failed = 0;
+std::vector<std::string> failed_tests;
+std::chrono::steady_clock::time_point start_time;
+std::chrono::steady_clock::time_point end_time;
+
+// ASSERT_EQ macro
+#define ASSERT_EQ(val1, val2) \
+    if ((val1) == (val2)) { \
+        std::cout << GREEN << "ASSERT_EQ passed: " << #val1 << " == " << #val2 << RESET << std::endl; \
+    } else { \
+        std::cout << RED << "ASSERT_EQ failed: " << #val1 << " != " << #val2 << RESET << std::endl; \
+    }
+
+// ASSERT_ITER_EQ macro
+#define ASSERT_ITER_EQ(iter1_begin, iter1_end, iter2_begin, iter2_end) \
+    if (std::equal((iter1_begin), (iter1_end), (iter2_begin), (iter2_end))) { \
+        std::cout << GREEN << "ASSERT_ITER_EQ passed: ranges are equal." << RESET << std::endl; \
+    } else { \
+        std::cout << RED << "ASSERT_ITER_EQ failed: ranges are not equal." << RESET << std::endl; \
+    }
+
+
+// Macro to start a test suite
+#define TEST_BEGIN(name) \
+    std::cout << "[ RUN      ] " << name << std::endl; \
+    start_time = std::chrono::steady_clock::now();
+
+// Macro to end a test suite
+#define TEST_END(name) \
+    end_time = std::chrono::steady_clock::now(); \
+    std::cout << "[       OK ] " << name << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count() << " ms)" << std::endl; \
+    test_passed++; \
+    test_count++;
+
+// ASSERT_STREQ macro for const char* and std::string
+#define ASSERT_STREQ(str1, str2) \
+    if (std::strcmp((str1), (str2)) == 0) { \
+        std::cout << GREEN << "ASSERT_STREQ passed: " << #str1 << " == " << #str2 << RESET << std::endl; \
+    } else { \
+        std::cout << RED << "ASSERT_STREQ failed: " << #str1 << " != " << #str2 << RESET << std::endl; \
+        test_failed++; \
+        test_count++; \
+        failed_tests.push_back(__FUNCTION__); \
+        return; \
+    }
+
+// ASSERT_STR_EQ macro for std::string
+#define ASSERT_STR_EQ(str1, str2) \
+    if ((str1) == (str2)) { \
+        std::cout << GREEN << "ASSERT_STR_EQ passed: " << #str1 << " == " << #str2 << RESET << std::endl; \
+    } else { \
+        std::cout << RED << "ASSERT_STR_EQ failed: " << #str1 << " != " << #str2 << RESET << std::endl; \
+        test_failed++; \
+        test_count++; \
+        failed_tests.push_back(__FUNCTION__); \
+        return; \
+    }
+
+// Function to print summary
+void print_summary() {
+    std::cout << GREEN << "[==========] " << test_count << " tests from " << test_count - test_failed 
+                                                        << " test suites ran." << RESET << std::endl;
+    std::cout << GREEN << "[  PASSED  ] " << test_passed << " tests." << RESET << std::endl;
+    if (test_failed > 0) {
+        std::cout << RED << "[  FAILED  ] " << test_failed << " tests, listed below:" << RESET << std::endl;
+        for (const auto& test : failed_tests) {
+            std::cout << RED << "[  FAILED  ] " << test << RESET << std::endl;
         }
     }
-    std::cout << GREEN << "\nArrays match" << RESET << std::endl;
-    return true;
-}
-// Specialization for std::array<char, N>
-template <const size_t N>
-bool compare_array(std::array<char, N>& a, std::array<char, N>& b)
-{
-     for(int i=0; i < N; i++) {
-        if(a[i] != b[i]) {
-            std::cout << RED << "Array a not eq to b at sub " << i << RESET << std::endl;
-            print_array(a);
-            print_array(b);
-            return false;
-        }
-    }
-    
-    std::cout << GREEN << "\nArrays match" << RESET << std::endl;
-    return true;
 }
