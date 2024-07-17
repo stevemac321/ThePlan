@@ -8,6 +8,7 @@
 #include <cstring>
 #include <vector>
 #include <chrono>
+#include <cstdio>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -37,35 +38,7 @@ void enable_virtual_terminal_processing() {
 #endif
 }
 
-template <typename T, const size_t N> constexpr size_t __countof(T (&)[N]) 
-{
-    return N;
-}
-// lambdas for comparisons
-auto strcmp_wrapper = [](const char* a, const char* b) { return std::strcmp(a, b) > 0; };
-auto string_comp_wrapper = [](const std::string& a, const std::string& b) { return a.compare(b) > 0; };
 
-template <typename DataType>
-concept Numeric = std::is_arithmetic_v<DataType>;
-
-template <typename T, const size_t N> void print_array(T (&a)[N]) 
-{
-    std::cout << "\n----------Print Array:--------------\n";
-    for(int i=0; i < N; i++) {
-        std::cout << a[i] << " ";
-    }
-    std::cout << "\n--------End Print Array-------------\n\n";
-}
-// Specialization for std::array<char, N>
-template <const size_t N>
-void print_array(std::array<char, N>& a)
-{
-    std::cout << "\n----------Print Array:--------------\n";
-    for(int i=0; i < N; i++) {
-        std::cout << a[i] << " ";
-    }
-    std::cout << "\n--------End Print Array-------------\n\n";
-}
 //////////////////////////////////////////////////////////////////////
     // Global variables
 int test_count = 0;
@@ -139,4 +112,32 @@ void print_summary() {
             std::cout << RED << "[  FAILED  ] " << test << RESET << std::endl;
         }
     }
+}
+/////////////////////////////////////////////////////////////////////////////////////////
+// helper functions
+template <typename T, const size_t N> constexpr size_t __countof(T (&)[N]) 
+{
+    return N;
+}
+
+template <typename DataType>
+concept Numeric = std::is_arithmetic_v<DataType>;
+
+template <typename T, const size_t N> void print_array(T (&a)[N]) 
+{
+    std::cout << "\n----------Print Array:--------------\n";
+    for(int i=0; i < N; i++) {
+        std::cout << a[i] << " ";
+    }
+    std::cout << "\n--------End Print Array-------------\n\n";
+}
+// Specialization for std::array<char, N>
+template <const size_t N>
+void print_array(std::array<char, N>& a)
+{
+    std::cout << "\n----------Print Array:--------------\n";
+    for(int i=0; i < N; i++) {
+        std::cout << a[i] << " ";
+    }
+    std::cout << "\n--------End Print Array-------------\n\n";
 }

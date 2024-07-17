@@ -119,4 +119,30 @@ public:
         root = inner_insert(root, data);
     }
 };
+///////////////////////////////////////////////////////////////////////////////
+void test_binary_tree()
+{
+    TEST_BEGIN("test_binary_tree 1")
+    int a[] = {9, 3, 5, 1};
+    BinTree<int> tree;
+  
+    // Inserting elements into the tree
+    for (const auto& i : a) {
+        tree.insert(i);
+    }
+    std::vector<int> v  = tree.get_test_vector();
+    int exp[] = {1, 3, 5, 9};
+    ASSERT_ITER_EQ(std::begin(exp), std::end(exp), v.begin(), v.end()); 
+    TEST_END("test_binary_tree 1")    
+    
+    TEST_BEGIN("test_binary_tree 2")
+    int exp2[] = {1, 3, 9};
+    int val = 5;
+    tree.remove(val);
+    std::vector<int> v2  = tree.get_test_vector();
+    ASSERT_ITER_EQ(std::begin(exp2), std::end(exp2), v2.begin(), v2.end()); 
+   
+    TEST_END("test_binary_tree 2")
+}
+
 

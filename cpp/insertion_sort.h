@@ -19,13 +19,17 @@ Termination:  When the loop terminates, the invariant gives us a useful property
 is correct. (when j == len)
  */
 #pragma once
-// Generic insertion sort template with a comparator
+// lambdas for comparisons
+auto insertion_strcmp = [](const char* a, const char* b) { return std::strcmp(a, b) > 0; };
+auto insertion_string_comp = [](const std::string& a, const std::string& b) { return a.compare(b) > 0; };
+
+// Generic insertion sort template with a comparator: NOTE greater for ascending, less for descending.
 template <typename T, const size_t N, typename Compare = std::greater<T>>
 void insertion_sort(T (&array)[N], Compare comp = Compare()) {
     for (size_t j = 1; j < N; ++j) {
         T key = array[j];
         int i = j - 1;
-        while (i >= 0 && comp(array[i], key)) {
+        while (i >= 0 && comp(array[i], key)) {  // greater for ascending
             array[i + 1] = array[i];
             --i;
         }
@@ -47,3 +51,47 @@ void insertion_sort(std::array<char, N>& a)
         a[i+1] = key;
     }
 }
+/////////////////////////////////////////////////////////////////////////////////
+void test_insertion_sort()
+{
+    TEST_BEGIN("test_insertion_sort 1")
+    int a[] = {44,2,6,8,0,1};
+    int b[] = {0,1,2,6,8,44};
+    insertion_sort(a);
+    ASSERT_ITER_EQ(std::begin(a), std::end(a), std::begin(b), std::end(b)); 
+    TEST_END("test_insertion_sort 1")
+
+    TEST_BEGIN("test_insertion_sort 2")
+    int a2[] = {44,2,6,8,0,1};
+    int g[] = {44,8,6,2,1,0};
+    insertion_sort(a2, std::less());
+    ASSERT_ITER_EQ(std::begin(a2), std::end(a2), std::begin(g), std::end(g)); 
+    TEST_END("test_insertion_sort 2")
+     
+    TEST_BEGIN("test_insertion_sort 3")
+    const char* charArray[] = {"banana", "apple", "cherry"};
+    const char* cmpArray[] = {"apple", "banana","cherry"};
+    insertion_sort(charArray, insertion_strcmp);
+    for(int i=0; i < 3; i++) {
+        ASSERT_STREQ(charArray[i], cmpArray[i]);
+    }
+    TEST_END("test_insertion_sort 3")
+
+    TEST_BEGIN("test_insertion_sort 4")
+    std::string stringArray[] = {"banana", "apple", "cherry"};
+    std::string cmpStringArray[] = {"apple", "banana","cherry"};
+    insertion_sort(stringArray, insertion_string_comp);
+    for(int i=0; i < 3; i++) {
+        ASSERT_STR_EQ(stringArray[i], cmpStringArray[i]);
+    }
+    TEST_END("test_insertion_sort 4")
+
+    TEST_BEGIN("test_insertion_sort 5")
+    std::array<char, 5> charstdArray = {'e', 'd', 'a', 'c', 'b'};
+    std::array<char, 5> cmpstdArray = {'a', 'b', 'c', 'd', 'e'};
+
+    insertion_sort(charstdArray);  // Uses the std::array specialization
+    ASSERT_ITER_EQ(std::begin(charstdArray), std::end(charstdArray), std::begin(cmpstdArray), std::end(cmpstdArray)); 
+    TEST_END("test_insertion_sort 5")
+    
+} 
