@@ -5,4 +5,5 @@
 5. libconformance are googletests set up to test C ISO conformance
 6. Rust Projects are study projects mostly going though the Rust Book
 7. cpp is a vscode project with cpp files that use c++23 and contains CLRS and Sedgewick study programs.
+8. cpp common.h has googletest type macros and colorful reports
    
