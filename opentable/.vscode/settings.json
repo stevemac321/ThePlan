@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "open_table.h": "c",
+        "functor.h": "c"
+    }
+}
