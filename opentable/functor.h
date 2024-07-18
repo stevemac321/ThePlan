@@ -14,9 +14,6 @@ typedef struct student {
 	double gpa;
 } student;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 // predicates
 bool record_gpaless(const student *v1, const student *v2);
@@ -61,7 +58,5 @@ bool is_geneven(const genptr v1);
 void print_genpstr(const genptr pp);	
 void str_genswap(genptr v1, genptr v2);
 bool str_genless(const genptr s1, const genptr s2);
-#ifdef __cplusplus
-}
-#endif
+
 

@@ -5,6 +5,7 @@
 ==============================================================================*/
 
 #include "common.h"
+#include "harness.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
@@ -17,6 +18,7 @@
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
 #endif
+
 
 /* TEST HARNESS*/
 int passed = 0;
@@ -35,12 +37,13 @@ int main()
 	enable_virtual_terminal_processing();
 
 	table_test1();
-    table_test2();
+   table_test2();
 	sine_table_test();
 }
 /*-----------------------------------------------------------------------------
 Test functions and data
 -----------------------------------------------------------------------------*/
+
 void table_test1()
 {
 	
@@ -135,6 +138,5 @@ void print_int_array(int *arr, const size_t count)
 
 	printf("\n");
 }
-
 
 #pragma GCC diagnostic pop
