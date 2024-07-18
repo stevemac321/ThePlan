@@ -6,4 +6,5 @@
 6. Rust Projects are study projects mostly going though the Rust Book
 7. cpp is a vscode project with cpp files that use c++23 and contains CLRS and Sedgewick study programs.
 8. cpp common.h has googletest type macros and colorful reports
+9. Opentable is an open addressing hashtable in C
    
