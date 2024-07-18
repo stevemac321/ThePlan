@@ -125,19 +125,17 @@ concept Numeric = std::is_arithmetic_v<DataType>;
 
 template <typename T, const size_t N> void print_array(T (&a)[N]) 
 {
-    std::cout << "\n----------Print Array:--------------\n";
     for(int i=0; i < N; i++) {
         std::cout << a[i] << " ";
     }
-    std::cout << "\n--------End Print Array-------------\n\n";
+    std::cout << "\n";
 }
 // Specialization for std::array<char, N>
 template <const size_t N>
 void print_array(std::array<char, N>& a)
 {
-    std::cout << "\n----------Print Array:--------------\n";
     for(int i=0; i < N; i++) {
         std::cout << a[i] << " ";
     }
-    std::cout << "\n--------End Print Array-------------\n\n";
+    std::cout << "\n";
 }

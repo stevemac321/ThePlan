@@ -7,10 +7,9 @@
 int main(int argc, char *argv[])
 {
     enable_virtual_terminal_processing();
-
-	test_binary_tree();
     test_insertion_sort();
     test_merge_sort();
-
+    test_binary_tree_insert_delete();
+    test_binary_tree_traversals();
     print_summary();
 }
