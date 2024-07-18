@@ -11,5 +11,6 @@ int main(int argc, char *argv[])
     test_merge_sort();
     test_binary_tree_insert_delete();
     test_binary_tree_traversals();
+    test_binary_tree_search();
     print_summary();
 }

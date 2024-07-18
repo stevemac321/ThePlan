@@ -67,7 +67,6 @@ class BinTree {
             func(p);
         }
     }
-    
     void inner_get_test_vector(BNode<DataType>* p, std::vector<DataType>& v) {
         if (p) {
             inner_get_test_vector(p->left, v);
@@ -82,7 +81,36 @@ class BinTree {
         }
         return p;
     }
+    BNode<DataType>* find_max(BNode<DataType>* p) {
+        while (p && p->right != nullptr) {
+            p = p->right;
+        }
+        return p;
+    }
+     BNode<DataType>* inner_search(BNode<DataType>* p, DataType &key) 
+    {
+        /*
+        iterative:
+        while(p != nullptr && key != p->data) {
+            if(key < p->data) {
+                p = p->left;
+            } else {
+                p = p->right
+            }
+            return p;
+        }
+        */
+        if(p == nullptr || key == p->data) {
+            return p;
+        }
 
+        if(key < p->data) {
+            return inner_search(p->left, key);
+        }else {
+            return inner_search(p->right, key);
+        }
+    }
+   
     BNode<DataType>* inner_remove(BNode<DataType>* p, const DataType& data) {
         if (p == nullptr) {
             return nullptr;
@@ -137,7 +165,10 @@ public:
     {
         inner_visit_post_order(root, func);
     }
-    
+    BNode<DataType>* search(DataType &key) 
+    {
+        return inner_search(root, key);
+    }
     std::vector<DataType> get_test_vector() 
     {
         std::vector<int> v;
@@ -150,6 +181,7 @@ public:
     }
 };
 ///////////////////////////////////////////////////////////////////////////////
+// tests
 void test_binary_tree_insert_delete()
 {
     TEST_BEGIN("test_binary_tree_insert_delete 1")
@@ -208,6 +240,31 @@ void test_binary_tree_traversals()
     print_array(e3);
     TEST_END("test_binary_tree_traversals POST-ORDER")
 }
+
+void test_binary_tree_search()
+{
+    TEST_BEGIN("test_binary_tree_search 1")
+    int a[] = {15, 10, 20, 8, 12, 17, 25, 6, 11, 16, 18, 23, 27, 5, 7, 9, 14, 19, 22, 24};
+    BinTree<int> tree;
+  
+    // Inserting elements into the tree
+    for (const auto& i : a) {
+        tree.insert(i);
+    }
+    int find = 11;
+    auto p = tree.search(find);
+    
+    ASSERT_EQ(p->data, find);
+    TEST_END("test_binary_tree_search 1")
+
+    TEST_BEGIN("test_binary_tree_search 2")
+    find = 110;
+    p = tree.search(find);
+    bool cmp = (p == nullptr);
+    ASSERT_EQ(cmp, true);
+    TEST_END("test_binary_tree_search 2")
+}
+
 
 /*
 TC 2

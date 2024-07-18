@@ -47,6 +47,17 @@ int test_failed = 0;
 std::vector<std::string> failed_tests;
 std::chrono::steady_clock::time_point start_time;
 std::chrono::steady_clock::time_point end_time;
+// Macro to start a test suite
+#define TEST_BEGIN(name) \
+    std::cout << "[ RUN      ] " << name << std::endl; \
+    start_time = std::chrono::steady_clock::now();
+
+// Macro to end a test suite
+#define TEST_END(name) \
+    end_time = std::chrono::steady_clock::now(); \
+    std::cout << "[       OK ] " << name << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count() << " ms)" << std::endl; \
+    test_passed++; \
+    test_count++;
 
 // ASSERT_EQ macro
 #define ASSERT_EQ(val1, val2) \
@@ -63,19 +74,6 @@ std::chrono::steady_clock::time_point end_time;
     } else { \
         std::cout << RED << "ASSERT_ITER_EQ failed: ranges are not equal." << RESET << std::endl; \
     }
-
-
-// Macro to start a test suite
-#define TEST_BEGIN(name) \
-    std::cout << "[ RUN      ] " << name << std::endl; \
-    start_time = std::chrono::steady_clock::now();
-
-// Macro to end a test suite
-#define TEST_END(name) \
-    end_time = std::chrono::steady_clock::now(); \
-    std::cout << "[       OK ] " << name << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count() << " ms)" << std::endl; \
-    test_passed++; \
-    test_count++;
 
 // ASSERT_STREQ macro for const char* and std::string
 #define ASSERT_STREQ(str1, str2) \
