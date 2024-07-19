@@ -11,6 +11,7 @@ tableptr open_table_init(const size_t tbsize, const size_t datasize,
 			int (*compare)(const genptr, const genptr),
                         void(*alloc_insert)(tableptr, size_t, genptr));
 
+size_t quadratic_probe(size_t hash, int i, size_t table_size);
 void open_table_destroy(tableptr);
 enum insert_state open_table_insert(tableptr, genptr);
 bool open_table_remove_entry(tableptr, const genptr);
