@@ -9,6 +9,7 @@
 #include <vector>
 #include <chrono>
 #include <cstdio>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <windows.h>

@@ -84,6 +84,7 @@ void test_binary_tree_search()
 }
 void test_binary_tree_strings()
 {
+    TEST_BEGIN("test_binary_tree_strings 1")
     const char *a[] = {
     "John", "Mary", "Jane", "Michael", "Sarah", "David", "Laura", "James", "Linda", "Robert",
     "Karen", "Joseph", "Emily", "Charles", "Jennifer", "Thomas", "Jessica", "Daniel", "Megan",
@@ -96,11 +97,17 @@ void test_binary_tree_strings()
 
      BinTree<const char*, decltype(cmp_str), decltype(print_str)> tree(cmp_str, print_str);
   
-    // Inserting elements into the tree
+    // Inserting elements into the tree and compare vector
+    std::vector<const char*> v;
     for (const auto& i : a) {
         tree.insert(i);
+        v.push_back(i);
     }
     tree.visit_in_order();
+    std::sort(std::begin(v), std::end(v), std::strcmp);
+    auto tv = tree.get_test_vector();
+    ASSERT_ITER_EQ(std::begin(v), std::end(v), std::begin(tv), std::end(tv)); 
+    TEST_END("test_binary_tree_strings 1")
 }
 /*
 TC 2
