@@ -132,7 +132,25 @@ class BinTree {
         }
         return p;
     }
-     BNode<DataType>* inner_search(BNode<DataType>* p, DataType &key) 
+    void transplant(BNode<DataType> *u,BNode<DataType> *v)
+    {
+        if(u == nullptr) {
+            return;
+        }
+        
+        if(u->parent == nullptr) {
+            root = v;
+        } else if(u == u->parent->left) {
+            u->parent->left = v;
+        } else {
+            u->parent = v;
+        }
+        if(v == nullptr) {
+            v->parent = u->parent;
+        }
+        
+    }
+     BNode<DataType>* inner_search(BNode<DataType>* p, const DataType &key) 
     {
         /*
         iterative:
@@ -235,6 +253,27 @@ class BinTree {
     }
     return p;
 }
+void inner_remove_transplant(BNode<DataType> *z)
+{
+    if(z == nullptr) {
+        return;
+    }
+    if(z->left == nullptr) {
+        transplant(z, z->right);
+    }else if (z->right == nullptr) {
+        transplant(z, z->left);
+    } else {
+        BNode<DataType> * y = find_min(z->right);
+        if(y && y->parent != z) {
+            transplant(y, y->right);
+            y->right = z->right;
+            y->right->parent = y;
+        }
+        transplant(z,y);
+        y->left = z->left;
+        y->left->parent = y;
+    }
+}
 
 
 public:
@@ -251,6 +290,13 @@ public:
     {
         root = inner_remove_no_copy(root, data);
     }
+    void remove_transplant(const DataType& data)
+    {
+        BNode<DataType> *z = search(data);
+        if(z) {
+            inner_remove_transplant(z);
+        }
+    }
     void visit_in_order() const 
     {
         inner_visit_in_order(root);
@@ -264,7 +310,7 @@ public:
     {
         inner_visit_post_order(root);
     }
-    BNode<DataType>* search(DataType &key) 
+    BNode<DataType>* search(const DataType &key) 
     {
         return inner_search(root, key);
     }

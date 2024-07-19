@@ -131,6 +131,24 @@ void test_binary_tree_delete_no_copy()
     ASSERT_ITER_EQ(std::begin(exp), std::end(exp), v.begin(), v.end()); 
     TEST_END("test_binary_tree_delete_no_copy 1")     
 }
+void test_binary_tree_delete_transplant()
+{
+    TEST_BEGIN("test_binary_tree_delete_transplant 1")
+    int a[] = {9, 3, 5, 1};
+    BinTree<int> tree;
+  
+    // Inserting elements into the tree
+    for (const auto& i : a) {
+        tree.insert(i);
+    }
+    
+    int val = 5;
+    tree.remove_transplant(val);
+    std::vector<int> v  = tree.get_test_vector();
+    int exp[] = {1, 3, 9};
+    ASSERT_ITER_EQ(std::begin(exp), std::end(exp), v.begin(), v.end()); 
+    TEST_END("test_binary_tree_delete_transplant 1")     
+}
 /*
 TC 2
 first array is random, second in order expected, 3rd pre, 4th post, etc
