@@ -180,12 +180,12 @@ size_t open_table_entries(const tableptr table)
 }
 _Bool open_table_resize_needed(const tableptr table)
 {
-	assert(table);
-	size_t cap = table->table_size - table->count;
-	if (cap < (table->table_size / 4))
-		return true;
+   assert(table);
+   size_t cap = table->table_size - table->count;
+   if (cap < (table->table_size / 4))
+      return true;
 
-	return false;
+   return false;
 }
 
 size_t strhash(const char* value) {
@@ -202,25 +202,24 @@ size_t strhash(const char* value) {
 
 size_t inthash(const int* value)
 {
-	assert(value);
-	const int* ptr = value;
-	size_t val = 0;
-	size_t tmp = 0;
+   assert(value);
+   const int* ptr = value;
+   size_t val = 0;
+   size_t tmp = 0;
 
-	val = (val << 4) + (*ptr);
+   val = (val << 4) + (*ptr);
 
-	if ((tmp = (val & 0xf0000000))) {
-		val = val ^ (tmp >> 24);
-		val = val ^ tmp;
-	}
+   if ((tmp = (val & 0xf0000000))) {
+      val = val ^ (tmp >> 24);
+      val = val ^ tmp;
+   }
 
-	return val;
+   return val;
 }
 
 void table_report(const tableptr table)
 {
-	printf("Table size: %zu Element count: %zu Collisions: %zu\n", table->table_size, 
-							table->count, table->collisions);
+   printf("Table size: %zu Element count: %zu Collisions: %zu\n", table->table_size, table->count, table->collisions);
 }
 void table_int_alloc(tableptr table, size_t idx, genptr value)
 {
