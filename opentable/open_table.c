@@ -152,64 +152,7 @@ genptr open_table_lookup(const tableptr table, const genptr value) {
 }
 
 
-#if 0
-enum insert_state open_table_insert(tableptr table, const genptr value)
-{
-	assert(table);
 
-	if (open_table_lookup(table, value) != NULL)
-		return EXISTS;
-
-	for (int i = 0; i < table->table_size; i++) {
-		size_t idx =
-		    (table->h1(value) + (i * table->h2(value))) % table->table_size;
-
-		if (table->table[idx] == NULL) {
-                        table->alloc_insert(table, idx, value);
-        	table->count++;
-			return INSERTED;
-		} else {
-            table->collisions++;  // Increment collision count
-        }
-	}
-	// else we could not find a slot!
-	return TABLEFULL;
-}
-
-_Bool open_table_remove_entry(tableptr table, const genptr value)
-{
-	assert(table);
-	for (int i = 0; i < table->table_size; i++) {
-		size_t idx =
-		    (table->h1(value) + (i * table->h2(value))) % table->table_size;
-
-		if (table->table[idx] != NULL &&
-		    (table->compare(value, table->table[idx]) == 0)) {
-
-			Heap_Free(table->table[idx]);
-			table->table[idx] = NULL;
-			table->count--;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-genptr open_table_lookup(const tableptr table, const genptr value)
-{
-	assert(table);
-	for (int i = 0; i < table->table_size; i++) {
-		size_t idx =
-		    (table->h1(value) + (i * table->h2(value))) % table->table_size;
-
-		if (table->table[idx] != NULL &&
-		    (table->compare(value, table->table[idx]) == 0))
-			return table->table[idx];
-	}
-	return NULL;
-}
-#endif
 size_t open_table_resize(tableptr table, const size_t newsize)
 {
 	assert(table);
