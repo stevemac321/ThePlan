@@ -26,4 +26,5 @@ void table_report(const tableptr table);
 void table_int_alloc(tableptr table, size_t idx, genptr value);
 void table_str_alloc(tableptr table, size_t idx, genptr value);
 void open_table_cluster_report(const tableptr);
+void analyze_clusters(const tableptr table);
 

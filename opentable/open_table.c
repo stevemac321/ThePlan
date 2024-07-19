@@ -250,5 +250,46 @@ void open_table_cluster_report(const tableptr table)
 			printf("%s ", "F");
 		}
 	}
+	analyze_clusters(table);
 	puts("\n---------------END CLUSTER REPORT----------------------------\n");
+}
+
+void analyze_clusters(const tableptr table) 
+{
+    enum { IN, OUT } state = OUT;
+    size_t cluster_count = 0;
+    size_t total_cluster_length = 0;
+    size_t largest_cluster = 0;
+    size_t current_cluster_length = 0;
+
+    for (size_t i = 0; i < table->table_size; i++) {
+        if (table->table[i] != NULL) {  // Filled slot
+            if (state == OUT) {
+                state = IN;
+                cluster_count++;
+                current_cluster_length = 1;
+            } else {
+                current_cluster_length++;
+            }
+            total_cluster_length++;
+        } else {  // Empty slot
+            if (state == IN) {
+                state = OUT;
+                if (current_cluster_length > largest_cluster) {
+                    largest_cluster = current_cluster_length;
+                }
+                current_cluster_length = 0;  // Reset for next cluster
+            }
+        }
+    }
+
+    // Check if the last cluster is the largest
+    if (state == IN && current_cluster_length > largest_cluster) {
+        largest_cluster = current_cluster_length;
+    }
+
+    printf("Cluster Count: %zu\n", cluster_count);
+    printf("Total Cluster Length: %zu\n", total_cluster_length);
+    printf("Largest Cluster Size: %zu\n", largest_cluster);
+    printf("Average Cluster Length: %.2f\n", cluster_count ? (double)total_cluster_length / cluster_count : 0.0);
 }

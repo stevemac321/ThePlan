@@ -18,7 +18,7 @@
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
 #endif
-
+#define TABLESIZE 182
 
 /* TEST HARNESS*/
 int passed = 0;
@@ -48,7 +48,7 @@ void table_test1()
 {
 	
 	TC_BEGIN(__func__);
-	tableptr table = open_table_init(97, sizeof(int), inthash, inthash, int_cmp, table_int_alloc);
+	tableptr table = open_table_init(TABLESIZE, sizeof(int), inthash, inthash, int_cmp, table_int_alloc);
 	VERIFY(table);
 	PASSED(__func__, __LINE__);
 
@@ -73,7 +73,7 @@ void table_test1()
 void table_test2()
 {
 	TC_BEGIN(__func__);
-	tableptr table = open_table_init(97, sizeof(const char*), strhash, strhash, table_str_cmp, table_str_alloc);
+	tableptr table = open_table_init(TABLESIZE, sizeof(const char*), strhash, strhash, table_str_cmp, table_str_alloc);
 	VERIFY(table);
 	PASSED(__func__, __LINE__);
 	
