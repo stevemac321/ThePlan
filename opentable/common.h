@@ -19,4 +19,12 @@ typedef void* genptr;
 #include "algo.h"
 #include "functor.h"
 
+/* array size macros */
+#ifndef _countof
+#define _countof(x) sizeof(x) / sizeof(x[0])
+#endif
+
+#ifndef _gridcountof
+#define _gridcountof(x) sizeof(x) / sizeof(x[0][0])
+#endif
 
