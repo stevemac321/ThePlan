@@ -118,9 +118,6 @@ template <typename T, const size_t N> constexpr size_t __countof(T (&)[N])
     return N;
 }
 
-template <typename DataType>
-concept Numeric = std::is_arithmetic_v<DataType>;
-
 template <typename T, const size_t N> void print_array(T (&a)[N]) 
 {
     for(int i=0; i < N; i++) {

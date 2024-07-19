@@ -1,5 +1,8 @@
 #pragma once
 
+template <typename DataType>
+concept Numeric = std::is_arithmetic_v<DataType>;
+
 template <Numeric DataType>
 void merge(DataType A[], int p, int q, int r)
 {
