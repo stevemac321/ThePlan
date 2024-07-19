@@ -36,9 +36,9 @@ int main()
 	Heap_Init();
 	enable_virtual_terminal_processing();
 
-	table_test1();
+   table_test1();
    table_test2();
-	sine_table_test();
+   sine_table_test();
 }
 /*-----------------------------------------------------------------------------
 Test functions and data
@@ -63,7 +63,8 @@ void table_test1()
 
 	open_table_visit(table, print_int);
 	NL;
-	table_report(table);
+	
+	open_table_cluster_report(table);
 	printf("dupes: %d\n", dupes);
 	open_table_destroy(table);
 	PASSED(__func__, __LINE__);
@@ -76,8 +77,17 @@ void table_test2()
 	VERIFY(table);
 	PASSED(__func__, __LINE__);
 	
-	char *a[] = {"John",  "Mary",  "Joseph", "Abraham",
-		     "Obama", "Satan", "Larry"};
+	char *a[] = {
+    "John", "Mary", "Jane", "Michael", "Sarah", "David", "Laura", "James", "Linda", "Robert",
+    "Karen", "Joseph", "Emily", "Charles", "Jennifer", "Thomas", "Jessica", "Daniel", "Megan",
+    "Matthew", "Susan", "Brian", "Amanda", "William", "Elizabeth", "Richard", "Melissa",
+    "Anthony", "Michelle", "Christopher", "Lisa", "Joshua", "Kimberly", "Andrew", "Sandra",
+    "Alexander", "Nancy", "Steven", "Angela", "Edward", "Heather", "Paul", "Rebecca", "Kevin",
+    "Laura", "George", "Cynthia", "Jason", "Stephanie", "Timothy", "Sharon", "Mark", "Amy",
+    "Jeffrey", "Anna", "Scott", "Donna", "Gary", "Deborah", "Gregory", "Carol", "Kenneth",
+    "Ruth", "Ronald", "Katherine", "Patrick"};
+	
+
 	size_t len = _countof(a);
 
 	for (int i = 0; i < len; i++)
@@ -92,6 +102,8 @@ void table_test2()
 	open_table_remove_entry(table, a[3]);
 	open_table_visit(table, print_str);
 	NL;
+
+	open_table_cluster_report(table);
 	open_table_destroy(table);
 	PASSED(__func__, __LINE__);
 }
@@ -126,7 +138,7 @@ void sine_table_test()
 		int *p = open_table_lookup(table, &compare[i]);
 		VERIFY(p != NULL);
 	}
-
+	open_table_cluster_report(table);
 	open_table_destroy(table);
 }
 // often used print integer array

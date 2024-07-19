@@ -14,6 +14,7 @@ struct open_table {
 	size_t count;
 	size_t table_size;
 	size_t datasize;
+	size_t collisions;  // New field for tracking collisions
 	size_t (*h1)(const genptr value);
 	size_t (*h2)(const genptr value);
 	int (*compare)(const genptr, const genptr);
@@ -61,6 +62,7 @@ tableptr open_table_init(const size_t tbsize, const size_t datasize,
 	newtable->h1 = h1;
 	newtable->h2 = h2;
 	newtable->count=0;
+	newtable->collisions=0;
 	newtable->compare = compare;
         newtable->alloc_insert = alloc_insert;
 	newtable->count = 0;
@@ -110,9 +112,11 @@ enum insert_state open_table_insert(tableptr table, const genptr value)
 
 		if (table->table[idx] == NULL) {
                         table->alloc_insert(table, idx, value);
-        		table->count++;
+        	table->count++;
 			return INSERTED;
-		}
+		} else {
+            table->collisions++;  // Increment collision count
+        }
 	}
 	// else we could not find a slot!
 	return TABLEFULL;
@@ -185,23 +189,18 @@ _Bool open_table_resize_needed(const tableptr table)
 
 	return false;
 }
+size_t strhash(const char* value) {
+    assert(value);
+    size_t hash = 5381;
+    int c;
 
-size_t strhash(const char* value)
-{
-	assert(value);
-	const char *ptr = value;
-	size_t val = 0;
-	size_t tmp = 0;
+    while ((c = *value++)) {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
 
-	val = (val << 4) + (*ptr);
-
-	if ((tmp = (val & 0xf0000000))) {
-		val = val ^ (tmp >> 24);
-		val = val ^ tmp;
-	}
-
-	return val;
+    return hash;
 }
+
 size_t inthash(const int* value)
 {
 	assert(value);
@@ -218,22 +217,38 @@ size_t inthash(const int* value)
 
 	return val;
 }
+
 void table_report(const tableptr table)
 {
-	printf("Table size: %zu Element count: %zu\n", table->table_size, 
-							table->count);
+	printf("Table size: %zu Element count: %zu Collisions: %zu\n", table->table_size, 
+							table->count, table->collisions);
 }
 void table_int_alloc(tableptr table, size_t idx, genptr value)
 {
-        assert(table && value);
-        table->table[idx] = Heap_Malloc(table->datasize);
+    assert(table && value);
+    table->table[idx] = Heap_Malloc(table->datasize);
 	memcpy(table->table[idx], value, table->datasize);
 }
 
 void table_str_alloc(tableptr table, size_t idx, genptr value)
 {
-        assert(table && value);
-        const char * s = (const char*)value;
-        table->table[idx] = Heap_Malloc(strlen(s));
+    assert(table && value);
+    const char * s = (const char*)value;
+    table->table[idx] = Heap_Malloc(strlen(s));
 	strcpy(table->table[idx], s);
+}
+
+void open_table_cluster_report(const tableptr table) 
+{
+	puts("\n---------------REPORT----------------------------\n");
+	table_report(table);
+	puts("\n---------------CLUSTER REPORT----------------------------\n");
+	for (int i = 0; i < table->table_size; i++) {
+		if(table->table[i] == NULL) {
+			printf("%s ", "_");
+		} else {
+			printf("%s ", "F");
+		}
+	}
+	puts("\n---------------END CLUSTER REPORT----------------------------\n");
 }
