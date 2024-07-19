@@ -100,6 +100,7 @@ void test_binary_tree_strings()
     for (const auto& i : a) {
         tree.insert(i);
     }
+    tree.visit_in_order();
 }
 /*
 TC 2
