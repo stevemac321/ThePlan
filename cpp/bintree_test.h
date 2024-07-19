@@ -24,6 +24,7 @@ void test_binary_tree_insert_delete()
    
     TEST_END("test_binary_tree_insert_delete REMOVE")
 }
+
 void test_binary_tree_traversals()
 {
     TEST_BEGIN("test_binary_tree_traversals IN ORDER ")
@@ -104,10 +105,31 @@ void test_binary_tree_strings()
         v.push_back(i);
     }
     tree.visit_in_order();
-    std::sort(std::begin(v), std::end(v), std::strcmp);
+    auto cmp = [](const char* a, const char* b) {
+        return std::strcmp(a, b) < 0;
+    };
+    std::sort(std::begin(v), std::end(v), cmp);
     auto tv = tree.get_test_vector();
     ASSERT_ITER_EQ(std::begin(v), std::end(v), std::begin(tv), std::end(tv)); 
     TEST_END("test_binary_tree_strings 1")
+}
+void test_binary_tree_delete_no_copy()
+{
+    TEST_BEGIN("test_binary_tree_delete_no_copy 1")
+    int a[] = {9, 3, 5, 1};
+    BinTree<int> tree;
+  
+    // Inserting elements into the tree
+    for (const auto& i : a) {
+        tree.insert(i);
+    }
+    
+    int val = 5;
+    tree.remove_no_copy(val);
+    std::vector<int> v  = tree.get_test_vector();
+    int exp[] = {1, 3, 9};
+    ASSERT_ITER_EQ(std::begin(exp), std::end(exp), v.begin(), v.end()); 
+    TEST_END("test_binary_tree_delete_no_copy 1")     
 }
 /*
 TC 2

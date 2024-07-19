@@ -13,5 +13,6 @@ int main(int argc, char *argv[])
     test_binary_tree_traversals();
     test_binary_tree_search();
     test_binary_tree_strings();
+    test_binary_tree_delete_no_copy();
     print_summary();
 }

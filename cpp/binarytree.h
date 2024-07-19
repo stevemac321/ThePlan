@@ -88,14 +88,45 @@ class BinTree {
             inner_get_test_vector(p->right, v);
         }
     }
-
-    BNode<DataType>* find_min(BNode<DataType>* p) {
+ BNode<DataType>* successor(BNode<DataType>* x) 
+ {
+    if(x == nullptr) {
+        return nullptr;
+    }
+    if(x->right != nullptr) {
+        return find_min(x->right);
+    }
+    BNode<DataType> *y = x->parent;
+    while(y != nullptr && x == y->right) {
+        x = y;
+        y = y->parent;
+    }
+    return y;
+ }
+ BNode<DataType>* predecessor(BNode<DataType>* x) 
+ {
+    if(x == nullptr) {
+        return nullptr;
+    }
+    if(x->left != nullptr) {
+        return find_max(x->left);
+    }
+    BNode<DataType> *y = x->parent;
+    while(y != nullptr && x == y->left) {
+        x = y;
+        y = y->parent;
+    }
+    return y;
+ }
+    BNode<DataType>* find_min(BNode<DataType>* p) 
+    {
         while (p && p->left != nullptr) {
             p = p->left;
         }
         return p;
     }
-    BNode<DataType>* find_max(BNode<DataType>* p) {
+    BNode<DataType>* find_max(BNode<DataType>* p) 
+    {
         while (p && p->right != nullptr) {
             p = p->right;
         }
@@ -158,6 +189,53 @@ class BinTree {
         }
         return p;
     }
+    BNode<DataType>* inner_remove_no_copy(BNode<DataType>* p, const DataType& data) {
+    if (p == nullptr) {
+        return nullptr;
+    }
+    if (comp(data, p->data) == -1) {
+        p->left = inner_remove(p->left, data);
+    } else if (comp(data, p->data) == 1) {
+        p->right = inner_remove(p->right, data);
+    } else {
+        if (p->left == nullptr) {
+            BNode<DataType>* temp = p->right;
+            if (temp != nullptr) {
+                temp->parent = p->parent;
+            }
+            delete p;
+            return temp;
+        } else if (p->right == nullptr) {
+            BNode<DataType>* temp = p->left;
+            if (temp != nullptr) {
+                temp->parent = p->parent;
+            }
+            delete p;
+            return temp;
+        } else {
+            BNode<DataType>* succ = find_min(p->right);
+            succ->left = p->left;
+            if (p->left) {
+                p->left->parent = succ;
+            }
+            if (succ->parent != p) {
+                succ->parent->left = succ->right;
+                if (succ->right) {
+                    succ->right->parent = succ->parent;
+                }
+                succ->right = p->right;
+                if (p->right) {
+                    p->right->parent = succ;
+                }
+            }
+            succ->parent = p->parent;
+            delete p;
+            return succ;
+        }
+    }
+    return p;
+}
+
 
 public:
     BinTree(Compare compare = cmp_int, Func func=print_int) : comp(compare), func(func) {}
@@ -165,8 +243,13 @@ public:
         delete root;
     }
 
-    void remove(const DataType& data) {
+    void remove(const DataType& data) 
+    {
         root = inner_remove(root, data);
+    }
+    void remove_no_copy(const DataType& data) 
+    {
+        root = inner_remove_no_copy(root, data);
     }
     void visit_in_order() const 
     {
@@ -197,7 +280,7 @@ public:
     }
 };
 /////////////////////////////////////////////////////////
-  
+ 
 #include "bintree_test.h"
 
  
