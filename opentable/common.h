@@ -1,3 +1,4 @@
+
 #pragma once
 enum insert_state { INSERTED, EXISTS, TABLEFULL };
 typedef struct open_table open_table;
@@ -17,4 +18,5 @@ typedef void* genptr;
 #include "open_table.h"
 #include "algo.h"
 #include "functor.h"
+
 

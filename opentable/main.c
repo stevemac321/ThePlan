@@ -3,16 +3,11 @@
  Author      : Stephen MacKenzie
  Copyright   : Licensed under GPL version 2 (GPLv2)
 ==============================================================================*/
-
 #include "common.h"
 #include "harness.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
-
-#ifndef NL
-#define NL printf("\n")
-#endif
 
 #define SINE_ARRAY_SIZE 91
 #ifndef M_PI
@@ -20,13 +15,17 @@
 #endif
 #define TABLESIZE 182
 
+#ifndef NL
+#define NL printf("\n")
+#endif
+
 /* TEST HARNESS*/
 int passed = 0;
 int failed = 0;
 int tcs = 0;
-
 int int_cmp(const int* v1, const int* v2);
 void print_int_array(int *arr, const size_t count);
+
 void table_test1();
 void table_test2();
 void sine_table_test();
@@ -43,6 +42,7 @@ int main()
 /*-----------------------------------------------------------------------------
 Test functions and data
 -----------------------------------------------------------------------------*/
+
 
 void table_test1()
 {
@@ -141,6 +141,7 @@ void sine_table_test()
 	open_table_cluster_report(table);
 	open_table_destroy(table);
 }
+
 // often used print integer array
 
 void print_int_array(int *arr, const size_t count)

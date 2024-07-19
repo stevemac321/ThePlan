@@ -58,6 +58,7 @@
         "xmemory": "cpp",
         "xstring": "cpp",
         "xtr1common": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "harness.h": "c"
     }
 }
