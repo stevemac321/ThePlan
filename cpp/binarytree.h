@@ -310,6 +310,10 @@ void left_rotate(BNode<DataType>* x) {
     y->left = x; // Put x on y's left
     x->parent = y;
 }
+void right_rotate(BNode<DataType> * z)
+{
+
+}
 
 void inner_rb_insert(BNode<DataType> * z)
 {
@@ -336,10 +340,45 @@ void inner_rb_insert(BNode<DataType> * z)
     z->is_red = true;
     rb_insert_fixup(z);
 }
-void rb_insert_fixup(BNode<DataType> * z)
-{
-
+void rb_insert_fixup(BNode<DataType>* z) {
+    while (z->parent->is_red) {
+        if (z->parent == z->parent->parent->left) {
+            BNode<DataType>* y = z->parent->parent->right;
+            if (y->is_red) {
+                z->parent->is_red = false;
+                y->is_red = false;
+                z->parent->parent->is_red = true;
+                z = z->parent->parent;
+            } else {
+                if (z == z->parent->right) {
+                    z = z->parent;
+                    left_rotate(z);
+                }
+                z->parent->is_red = false;
+                z->parent->parent->is_red = true;
+                right_rotate(z->parent->parent);
+            }
+        } else {
+            BNode<DataType>* y = z->parent->parent->left;
+            if (y->is_red) {
+                z->parent->is_red = false;
+                y->is_red = false;
+                z->parent->parent->is_red = true;
+                z = z->parent->parent;
+            } else {
+                if (z == z->parent->left) {
+                    z = z->parent;
+                    right_rotate(z);
+                }
+                z->parent->is_red = false;
+                z->parent->parent->is_red = true;
+                left_rotate(z->parent->parent);
+            }
+        }
+    }
+    root->is_red = false;
 }
+
 
 
 public:

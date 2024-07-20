@@ -1,3 +1,15 @@
+fn max_subarray_sum(arr: &[i32]) -> i32 {
+    let mut max_sum = arr[0];
+    let mut current_sum = 0;
+    
+    for &num in arr {
+        current_sum = num.max(current_sum + num);
+        max_sum = max_sum.max(current_sum);
+    }
+    
+    max_sum
+}
+
 fn process_array(arr: &[i32]) -> (bool, i32, i32) {
     if arr.is_empty() {
         println!("The array is empty.");
