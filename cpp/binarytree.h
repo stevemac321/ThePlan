@@ -7,6 +7,7 @@ struct BNode {
     BNode<DataType>* right = nullptr;
     BNode<DataType>* left = nullptr;
     BNode<DataType>* parent = nullptr;
+    bool is_red = false;
 
     // Disable copy and move operations
     BNode(const BNode& other) = delete;
@@ -15,6 +16,7 @@ struct BNode {
     BNode& operator=(BNode&& other) = delete;
 
     // Constructor
+    BNode() {}
     BNode(const DataType& val, BNode<DataType> *parent) : data(val), parent(parent) {}
 
     // Destructor
@@ -44,8 +46,18 @@ class BinTree {
     Compare comp;
     Func func;
 
-   BNode<DataType>* inner_insert(BNode<DataType>* p, const DataType& data, BNode<DataType>* parent) 
-   {
+    BNode<DataType> sentinel;
+
+    void delete_tree(BNode<DataType>* p) const {
+        if (p && p != &sentinel) {
+            delete_tree(p->left);
+            delete_tree(p->right);
+            delete p;
+        }
+    }
+
+    BNode<DataType>* inner_insert(BNode<DataType>* p, const DataType& data, BNode<DataType>* parent) 
+    {
         if (p == nullptr) {
             return new BNode<DataType>(data, parent);
         }
@@ -275,13 +287,78 @@ void inner_remove_transplant(BNode<DataType> *z)
     }
 }
 
-
-public:
-    BinTree(Compare compare = cmp_int, Func func=print_int) : comp(compare), func(func) {}
-    ~BinTree() {
-        delete root;
+void left_rotate(BNode<DataType>* x) {
+    if (x == nullptr || x->right == nullptr) {
+        return;
     }
 
+    BNode<DataType>* y = x->right; // y is x's right child
+    x->right = y->left; // Turn y's left subtree into x's right subtree
+
+    if (y->left != &sentinel) {
+        y->left->parent = x;
+    }
+    y->parent = x->parent; // Link y's parent to x's parent
+
+    if (x->parent == &sentinel) {
+        root = y; // If x was root, make y the new root
+    } else if (x == x->parent->left) {
+        x->parent->left = y;
+    } else {
+        x->parent->right = y;
+    }
+    y->left = x; // Put x on y's left
+    x->parent = y;
+}
+
+void inner_rb_insert(BNode<DataType> * z)
+{
+    BNode<DataType> * y = &sentinel;
+    BNode<DataType> * x = root;
+    while(x != &sentinel) {
+        y = x;
+        if(comp(z->data, x->data) == -1) {
+            x = x->left;
+        }else {
+            x = x->right;
+        }
+    }
+    z->parent = y;
+    if(y == &sentinel) {
+        root = z;
+    }else if(comp(z->data, y->data) == -1) {
+        y->left = z;
+    }else {
+        y->right = z;
+    }
+    z->left = &sentinel;
+    z->right = &sentinel;
+    z->is_red = true;
+    rb_insert_fixup(z);
+}
+void rb_insert_fixup(BNode<DataType> * z)
+{
+
+}
+
+
+public:
+    BinTree(Compare compare = cmp_int, Func func=print_int) : comp(compare), func(func) 
+    {
+        sentinel.left = &sentinel;
+        sentinel.right = &sentinel;
+    }
+
+    ~BinTree() 
+    {
+        delete_tree(root);
+        root = nullptr;
+    }
+    void rb_insert(const DataType &data)
+    {
+        auto z = new BNode<DataType>(data, nullptr);
+        inner_rb_insert(z);
+    }
     void remove(const DataType& data) 
     {
         root = inner_remove(root, data);
