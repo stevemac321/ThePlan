@@ -188,6 +188,19 @@ _Bool open_table_resize_needed(const tableptr table)
    return false;
 }
 
+#define FNV_PRIME_32 16777619
+#define FNV_OFFSET_BASIS_32 2166136261U
+
+//fnv1a
+size_t strhash(const char* str) {
+    size_t hash = FNV_OFFSET_BASIS_32;
+    for (const char* p = str; *p != '\0'; p++) {
+        hash ^= (size_t)(unsigned char)(*p);
+        hash *= FNV_PRIME_32;
+    }
+    return hash;
+}
+#if 0
 size_t strhash(const char* value) {
     assert(value);
     size_t hash = 5381;
@@ -200,6 +213,43 @@ size_t strhash(const char* value) {
     return hash;
 }
 
+
+
+#define MURMUR_SEED 0xdeadbeef
+// murmur
+size_t strhash(const char* key) {
+    size_t len = strlen(key);
+    size_t hash = MURMUR_SEED;
+    const size_t* data = (const size_t*)key;
+    const size_t* end = data + (len / sizeof(size_t));
+    const unsigned char* tail = (const unsigned char*)(data + (len & ~(sizeof(size_t) - 1)));
+
+    while (data != end) {
+        size_t k = *data++;
+        k *= 0xcc9e2d51;
+        k = (k << 15) | (k >> 17);
+        k *= 0x1b873593;
+        hash ^= k;
+        hash = (hash << 13) | (hash >> 19);
+        hash = hash * 5 + 0xe6546b64;
+    }
+
+    while (*tail != '\0') {
+        hash ^= (size_t)(*tail++);
+        hash = (hash << 13) | (hash >> 19);
+        hash = hash * 5 + 0xe6546b64;
+    }
+
+    hash ^= len;
+    hash ^= hash >> 16;
+    hash *= 0x85ebca6b;
+    hash ^= hash >> 13;
+    hash *= 0xc2b2ae35;
+    hash ^= hash >> 16;
+
+    return hash;
+}
+#endif
 size_t inthash(const int* value)
 {
    assert(value);
