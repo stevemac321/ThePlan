@@ -4,7 +4,7 @@
  Copyright   : Licensed under GPL version 2 (GPLv2)
 ==============================================================================*/
 #include "common.h"
-#include "harness.h"
+
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
@@ -49,7 +49,6 @@ void product_test();
 int main()
 {
 	Heap_Init();
-	enable_virtual_terminal_processing();
 
    table_test1();
    table_test2();
