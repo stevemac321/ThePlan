@@ -21,8 +21,7 @@ struct BNode {
 
     // Destructor
     ~BNode() {
-        delete left;
-        delete right;
+  
     }
 };
 
@@ -42,11 +41,12 @@ auto cmp_str = [](const char *key, const char *pdata) {return std::strcmp(key, p
 
 template <typename DataType, typename Compare = decltype(cmp_int), typename Func = decltype(print_int)>
 class BinTree {
-    BNode<DataType>* root = nullptr;
+    BNode<DataType> sentinel;
+    BNode<DataType>* root = &sentinel;
     Compare comp;
     Func func;
 
-    BNode<DataType> sentinel;
+ 
 
     void delete_tree(BNode<DataType>* p) const {
         if (p && p != &sentinel) {
@@ -56,23 +56,8 @@ class BinTree {
         }
     }
 
-    BNode<DataType>* inner_insert(BNode<DataType>* p, const DataType& data, BNode<DataType>* parent) 
-    {
-        if (p == nullptr) {
-            return new BNode<DataType>(data, parent);
-        }
-        if (comp(data, p->data) == 0) {
-            p->count++;
-        } else if (comp(data, p->data) == -1) {
-            p->left = inner_insert(p->left, data, p);
-        } else {
-            p->right = inner_insert(p->right, data, p);
-        }
-        return p;
-    }
-    
     void inner_visit_in_order(BNode<DataType>* p) const {
-        if (p) {
+        if (p != &sentinel) {
             inner_visit_in_order(p->left);
             func(p);
             inner_visit_in_order(p->right);
@@ -80,21 +65,21 @@ class BinTree {
     }
 
     void inner_visit_pre_order(BNode<DataType>* p) const {
-        if (p) {
+        if (p != &sentinel) {
             func(p);
             inner_visit_pre_order(p->left);
             inner_visit_pre_order(p->right);
         }
     }
     void inner_visit_post_order(BNode<DataType>* p) const {
-        if (p) {
+        if (p != &sentinel) {
             inner_visit_post_order(p->left);
             inner_visit_post_order(p->right);
             func(p);
         }
     }
     void inner_get_test_vector(BNode<DataType>* p, std::vector<DataType>& v) {
-        if (p) {
+        if (p != &sentinel) {
             inner_get_test_vector(p->left, v);
             v.push_back(p->data);
             inner_get_test_vector(p->right, v);
@@ -144,24 +129,26 @@ class BinTree {
         }
         return p;
     }
-    void transplant(BNode<DataType> *u,BNode<DataType> *v)
-    {
-        if(u == nullptr) {
+    void transplant(BNode<DataType>* u, BNode<DataType>* v) {
+        if (u == nullptr) {
             return;
         }
-        
-        if(u->parent == nullptr) {
+
+        if (u->parent == nullptr) {
             root = v;
-        } else if(u == u->parent->left) {
-            u->parent->left = v;
-        } else {
-            u->parent = v;
         }
-        if(v == nullptr) {
+        else if (u == u->parent->left) {
+            u->parent->left = v;
+        }
+        else {
+            u->parent->right = v;  // Correct the right child assignment
+        }
+
+        if (v != nullptr) {  // Only assign the parent if v is not null
             v->parent = u->parent;
         }
-        
     }
+
      BNode<DataType>* inner_search(BNode<DataType>* p, const DataType &key) 
     {
         /*
@@ -185,108 +172,6 @@ class BinTree {
             return inner_search(p->right, key);
         }
     }
-   
-    BNode<DataType>* inner_remove(BNode<DataType>* p, const DataType& data) {
-        if (p == nullptr) {
-            return nullptr;
-        }
-        if (comp(data, p->data) == -1) {
-            p->left = inner_remove(p->left, data);
-        } else if (comp(data, p->data) == 1) {
-            p->right = inner_remove(p->right, data);
-        } else {
-            // Node found
-            if (p->left == nullptr) {
-                BNode<DataType>* temp = p->right;
-                if (temp != nullptr) {
-                    temp->parent = p->parent; // Update parent pointer
-                }
-                delete p;
-                return temp;
-            } else if (p->right == nullptr) {
-                BNode<DataType>* temp = p->left;
-                if (temp != nullptr) {
-                    temp->parent = p->parent; // Update parent pointer
-                }
-                delete p;
-                return temp;
-            } else {
-                // Two children case
-                BNode<DataType>* succ = find_min(p->right);
-                p->data = succ->data;
-                p->right = inner_remove(p->right, succ->data);
-            }
-        }
-        return p;
-    }
-    BNode<DataType>* inner_remove_no_copy(BNode<DataType>* p, const DataType& data) {
-    if (p == nullptr) {
-        return nullptr;
-    }
-    if (comp(data, p->data) == -1) {
-        p->left = inner_remove(p->left, data);
-    } else if (comp(data, p->data) == 1) {
-        p->right = inner_remove(p->right, data);
-    } else {
-        if (p->left == nullptr) {
-            BNode<DataType>* temp = p->right;
-            if (temp != nullptr) {
-                temp->parent = p->parent;
-            }
-            delete p;
-            return temp;
-        } else if (p->right == nullptr) {
-            BNode<DataType>* temp = p->left;
-            if (temp != nullptr) {
-                temp->parent = p->parent;
-            }
-            delete p;
-            return temp;
-        } else {
-            BNode<DataType>* succ = find_min(p->right);
-            succ->left = p->left;
-            if (p->left) {
-                p->left->parent = succ;
-            }
-            if (succ->parent != p) {
-                succ->parent->left = succ->right;
-                if (succ->right) {
-                    succ->right->parent = succ->parent;
-                }
-                succ->right = p->right;
-                if (p->right) {
-                    p->right->parent = succ;
-                }
-            }
-            succ->parent = p->parent;
-            delete p;
-            return succ;
-        }
-    }
-    return p;
-}
-void inner_remove_transplant(BNode<DataType> *z)
-{
-    if(z == nullptr) {
-        return;
-    }
-    if(z->left == nullptr) {
-        transplant(z, z->right);
-    }else if (z->right == nullptr) {
-        transplant(z, z->left);
-    } else {
-        BNode<DataType> * y = find_min(z->right);
-        if(y && y->parent != z) {
-            transplant(y, y->right);
-            y->right = z->right;
-            y->right->parent = y;
-        }
-        transplant(z,y);
-        y->left = z->left;
-        y->left->parent = y;
-    }
-}
-
 void left_rotate(BNode<DataType>* x) {
     if (x == nullptr || x->right == nullptr) {
         return;
@@ -337,33 +222,48 @@ void right_rotate(BNode<DataType>* x) {
     y->right = x;
     x->parent = y;
 }
+void inner_rb_insert(BNode<DataType>* z) {
+    if (z == nullptr) {
+        throw std::invalid_argument("Node to be inserted is null");
+    }
 
+    BNode<DataType>* y = &sentinel;
+    BNode<DataType>* x = root;
 
-void inner_rb_insert(BNode<DataType> * z)
-{
-    BNode<DataType> * y = &sentinel;
-    BNode<DataType> * x = root;
-    while(x != &sentinel) {
+    while (x != &sentinel) {
         y = x;
-        if(comp(z->data, x->data) == -1) {
+
+        if (x == nullptr) {
+            throw std::runtime_error("Encountered a null node in the tree");
+        }
+
+        if (comp(z->data, x->data) == -1) {
             x = x->left;
-        }else {
+        }
+        else {
             x = x->right;
         }
     }
+
     z->parent = y;
-    if(y == &sentinel) {
+    if (y == &sentinel) {
         root = z;
-    }else if(comp(z->data, y->data) == -1) {
-        y->left = z;
-    }else {
-        y->right = z;
     }
+    else {
+        if (comp(z->data, y->data) == -1) {
+            y->left = z;
+        }
+        else {
+            y->right = z;
+        }
+    }
+
     z->left = &sentinel;
     z->right = &sentinel;
     z->is_red = true;
     rb_insert_fixup(z);
 }
+
 void rb_insert_fixup(BNode<DataType>* z) {
     while (z->parent->is_red) {
         if (z->parent == z->parent->parent->left) {
@@ -417,26 +317,22 @@ public:
         delete_tree(root);
         root = nullptr;
     }
-    void rb_insert(const DataType &data)
-    {
+
+    void rb_insert(const DataType& data) {
         auto z = new BNode<DataType>(data, nullptr);
-        inner_rb_insert(z);
-    }
-    void remove(const DataType& data) 
-    {
-        root = inner_remove(root, data);
-    }
-    void remove_no_copy(const DataType& data) 
-    {
-        root = inner_remove_no_copy(root, data);
-    }
-    void remove_transplant(const DataType& data)
-    {
-        BNode<DataType> *z = search(data);
-        if(z) {
-            inner_remove_transplant(z);
+        if (root == &sentinel) {
+            // Tree is empty, z becomes the root
+            z->parent = &sentinel;
+            root = z;
+            root->is_red = false;  // Root must be black
+            root->left = &sentinel;
+            root->right = &sentinel;
+        }
+        else {
+            inner_rb_insert(z);
         }
     }
+
     void visit_in_order() const 
     {
         inner_visit_in_order(root);
@@ -459,10 +355,6 @@ public:
         std::vector<DataType> v;
         inner_get_test_vector(root, v);
         return v;
-    }
-
-    void insert(const DataType& data) {
-        root = inner_insert(root, data, nullptr);
     }
 };
 /////////////////////////////////////////////////////////
