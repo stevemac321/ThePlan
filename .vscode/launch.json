@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug with LLDB",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": true, // Enable external console for debugging
+      "MIMode": "lldb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for lldb",
+          "text": "settings set target.pretty-printing true",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "C/C++: CLANG BUILD SCTIVE FILE",
+      "miDebuggerPath": "C:\\Program Files\\LLVM\\bin\\lldb.exe",
+      "logging": {
+        "engineLogging": true,
+        "trace": true,
+        "traceResponse": true
+      },
+      "internalConsoleOptions": "openOnSessionStart"
+    }
+  ]
+}

@@ -15,5 +15,6 @@ int main(int argc, char *argv[])
     test_binary_tree_strings();
     test_binary_tree_delete_no_copy();
     test_binary_tree_delete_transplant();
+    test_binary_tree_rb_insert();
     print_summary();
 }

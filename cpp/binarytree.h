@@ -310,10 +310,34 @@ void left_rotate(BNode<DataType>* x) {
     y->left = x; // Put x on y's left
     x->parent = y;
 }
-void right_rotate(BNode<DataType> * z)
-{
-
+void right_rotate(BNode<DataType>* x) {
+    if (x == nullptr || x == &sentinel) {
+        return;
+    }
+    
+    BNode<DataType>* y = x->left;
+    if (y == &sentinel) {
+        return;
+    }
+    
+    x->left = y->right;
+    if (y->right != &sentinel) {
+        y->right->parent = x;
+    }
+    
+    y->parent = x->parent;
+    if (x->parent == &sentinel) {
+        root = y;
+    } else if (x == x->parent->right) {
+        x->parent->right = y;
+    } else {
+        x->parent->left = y;
+    }
+    
+    y->right = x;
+    x->parent = y;
 }
+
 
 void inner_rb_insert(BNode<DataType> * z)
 {
