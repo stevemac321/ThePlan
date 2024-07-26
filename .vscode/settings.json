@@ -59,6 +59,12 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "algorithm": "cpp",
-        "harness.h": "c"
+        "harness.h": "c",
+        "deque": "cpp",
+        "map": "cpp",
+        "queue": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "xtree": "cpp"
     }
 }
