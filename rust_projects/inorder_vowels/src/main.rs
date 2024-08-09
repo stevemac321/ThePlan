@@ -113,6 +113,7 @@ fn remove_comments() -> io::Result<()> {
 }
 
 fn main() -> io::Result<()> {
-    inorder_vowels();
+    test_inorder_vowels();
     remove_comments()
+    
 }
