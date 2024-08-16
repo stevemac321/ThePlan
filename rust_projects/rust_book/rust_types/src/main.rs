@@ -55,6 +55,8 @@ fn main() {
     test_vector_heap_allocated();
     test_array_of_characters();
     test_string_ownership_borrowing();
+    let s: String = String::from("hello world");
+    println!("{}", first_word(&s));
 }
 /*
 It's more accurate to say that the calling code is "enabling a borrow" for the function. Here's why: Borrowing in Rust 
@@ -72,7 +74,7 @@ fn test_integer_array_on_stack() {
     // Declare a fixed-size array on the stack
     let arr: [i32; 5] = [1, 2, 3, 4, 5];
     
-    // Borrow the array as a slice and pass it to a function
+    // (I think I prefer the term 'lend' from the caller's POV.) Borrow the array as a slice and pass it to a function
     process_integer_slice(&arr);
 
     // Pass ownership of the array to another function (not typical for fixed-size arrays)
@@ -161,3 +163,17 @@ fn test_string_ownership_borrowing() {
 fn process_string(s: String) {
     println!("Processing string: {}", s);
 }
+
+
+fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for(i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+    &s[..]
+}
+
+
